@@ -1,0 +1,104 @@
+const basicColors = [
+  'rgb(255, 255, 255)',  // White
+  'rgb(0, 0, 0)',        // Black
+  'rgb(255, 0, 0)',      // Red
+  'rgb(0, 255, 0)',      // Green
+  'rgb(0, 0, 255)',      // Blue
+  'rgb(255, 255, 0)',    // Yellow
+  'rgb(255, 0, 255)',    // Magenta
+  'rgb(0, 255, 255)'     // Cyan
+];
+
+const shadesOfColors = [
+  'rgb(255, 0, 0)',
+  'rgb(255, 128, 0)',
+  'rgb(255, 255, 0)',
+  'rgb(0, 255, 0)',
+  'rgb(0, 255, 255)',
+  'rgb(0, 0, 255)',
+  'rgb(128, 0, 255)',
+  'rgb(255, 0, 128)'
+];
+
+const canvas = document.createElement('canvas');
+document.body.appendChild(canvas);
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const ctx = canvas.getContext('2d');
+
+let isDrawing = false;
+let selectedColor = basicColors[0];
+
+canvas.addEventListener('mousedown', () => {
+  isDrawing = true;
+});
+
+canvas.addEventListener('mouseup', () => {
+  isDrawing = false;
+  ctx.beginPath();
+});
+
+canvas.addEventListener('mousemove', draw);
+
+function draw(e) {
+  if (!isDrawing) return;
+
+  ctx.lineWidth = 10;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = selectedColor;
+
+  ctx.lineTo(e.clientX, e.clientY);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(e.clientX, e.clientY);
+}
+
+const colorsContainer = document.createElement('div');
+document.body.appendChild(colorsContainer);
+colorsContainer.style.position = 'fixed';
+colorsContainer.style.top = '50%';
+colorsContainer.style.right = '0';
+colorsContainer.style.transform = 'translateY(-50%)';
+colorsContainer.style.display = 'flex';
+colorsContainer.style.flexDirection = 'column';
+colorsContainer.style.alignItems = 'center';
+
+basicColors.forEach(color => {
+  const colorDiv = createColorDiv(color);
+  colorsContainer.appendChild(colorDiv);
+});
+
+shadesOfColors.forEach(color => {
+  const colorDiv = createColorDiv(color);
+  colorsContainer.appendChild(colorDiv);
+});
+
+// Button to clear the canvas
+const clearButton = document.createElement('button');
+clearButton.textContent = 'Clear';
+clearButton.style.width = '30px';
+clearButton.style.height = '30px';
+clearButton.style.marginTop = '5px';
+clearButton.style.cursor = 'pointer';
+clearButton.addEventListener('click', clearCanvas);
+colorsContainer.appendChild(clearButton);
+
+function createColorDiv(color) {
+  const colorDiv = document.createElement('div');
+  colorDiv.style.width = '30px';
+  colorDiv.style.height = '30px';
+  colorDiv.style.borderRadius = '50%';
+  colorDiv.style.backgroundColor = color;
+  colorDiv.style.marginBottom = '5px';
+  colorDiv.style.cursor = 'pointer';
+
+  colorDiv.addEventListener('click', () => {
+    selectedColor = color;
+  });
+
+  return colorDiv;
+}
+
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
